@@ -223,7 +223,10 @@ const searchByUserName = async (req, res) => {
     // Encontre todas as notícias associadas a esse usuário
     const posts = await Post.find({ user: user._id })
       .sort({ _id: -1 })
-      .populate("user")
+      .populate({
+        path: "user",
+        populate: { path: "avatar" },
+      })
       .populate("banner");
 
     return res.status(200).json(posts);
