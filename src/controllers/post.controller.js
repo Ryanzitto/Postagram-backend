@@ -125,6 +125,12 @@ const getById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!id) {
+      return res
+        .status(400)
+        .send({ message: "Algo de errado não está certo com sua requisição" });
+    }
+
     const posts = await getByIdService(id);
 
     if (!posts) {
@@ -152,7 +158,6 @@ const getById = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("entrou no getbyid");
     res.status(500).send({ message: error.message });
   }
 };
