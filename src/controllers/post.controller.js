@@ -24,8 +24,6 @@ import Post from "../models/Post.js";
 
 import Picture from "../models/Picture.js";
 
-import fs from "fs";
-
 const create = async (req, res) => {
   try {
     const { title, text } = req.body;
@@ -39,7 +37,7 @@ const create = async (req, res) => {
     }
 
     const picture = new Picture({
-      src: file.path,
+      src: file.location,
     });
 
     const pictureRef = await createPictureService(picture);
@@ -254,8 +252,6 @@ const update = async (req, res) => {
     }
 
     const posts = await getByIdService(id);
-
-    console.log(posts);
 
     if (posts.user.id != req.userId) {
       return res.status(400).send({ message: "you did not update this post" });

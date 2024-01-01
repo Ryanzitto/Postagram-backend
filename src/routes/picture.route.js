@@ -18,4 +18,8 @@ router.get("/", findAll);
 
 router.get("/:id", getPictureById);
 
+router.post("/upload", upload.single("file"), (req, res) => {
+  return res.json({ message: "Arquivo enviado com sucesso!", file: req.file });
+});
+
 export default router;
