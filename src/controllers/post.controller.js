@@ -19,6 +19,7 @@ import {
   getPictureByIdService,
 } from "../services/picture.service.js";
 
+import { deleteFile } from "../../config/multer.js";
 import User from "../models/User.js";
 import Post from "../models/Post.js";
 
@@ -38,9 +39,12 @@ const create = async (req, res) => {
 
     const picture = new Picture({
       src: file.location,
+      name: file.key,
     });
 
     const pictureRef = await createPictureService(picture);
+
+    console.log(pictureRef);
 
     const posts = await createService({
       title,
@@ -269,7 +273,13 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { idPicture } = req.body;
+    const { idPicture, pictureName } = req.body;
+
+    if (!idPicture || !pictureName) {
+      return res
+        .status(400)
+        .send({ message: "Submit All fields to delete this post" });
+    }
 
     const posts = await getByIdService(id);
 
@@ -287,7 +297,7 @@ const deletePost = async (req, res) => {
 
     await removePictureService(idPicture);
 
-    fs.unlinkSync(picture.src);
+    const deletedFile = await deleteFile(pictureName);
 
     return res.send({ message: "post deleted!" });
   } catch (error) {
