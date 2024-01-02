@@ -16,8 +16,15 @@ const create = async (req, res) => {
 
     const file = req.file;
 
+    if (!file) {
+      res.status(400).send({
+        message: "Send a file to continue!",
+      });
+    }
+
     const picture = new Picture({
-      src: file.path,
+      src: file.location,
+      name: file.key,
     });
 
     if (!name || !userName || !email || !password) {
@@ -120,5 +127,7 @@ const update = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
+
+//Criar uma rota de deleção de usuario
 
 export default { create, findAll, findById, update, findByUserName };

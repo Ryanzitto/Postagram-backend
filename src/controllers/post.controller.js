@@ -44,8 +44,6 @@ const create = async (req, res) => {
 
     const pictureRef = await createPictureService(picture);
 
-    console.log(pictureRef);
-
     const posts = await createService({
       title,
       text,
