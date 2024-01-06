@@ -84,6 +84,26 @@ const removeCommentService = (id, idComment, userId) =>
     { $pull: { comments: { idComment, userId } } }
   );
 
+const searchByUserNameService = (userName) => User.findOne({ userName });
+
+const findByUserUserId = (user) =>
+  Post.find({ user: user._id })
+    .sort({ _id: -1 })
+    .populate({
+      path: "user",
+      populate: { path: "avatar" },
+    })
+    .populate("banner");
+
+const findByUserName = (userName) =>
+  Post.findOne({ userName })
+    .sort({ _id: -1 })
+    .populate({
+      path: "user",
+      populate: { path: "avatar" },
+    })
+    .populate("banner");
+
 export {
   createService,
   findAllService,
@@ -97,4 +117,7 @@ export {
   likeDeleteService,
   addCommentService,
   removeCommentService,
+  searchByUserNameService,
+  findByUserUserId,
+  findByUserName,
 };

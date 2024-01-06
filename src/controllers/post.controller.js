@@ -15,35 +15,42 @@ import {
 
 import {
   createPictureService,
-  removePictureService,
   getPictureByIdService,
+  removePictureService,
 } from "../services/picture.service.js";
 
 import { deleteFile } from "../../config/multer.js";
-import User from "../models/User.js";
-import Post from "../models/Post.js";
 
 import Picture from "../models/Picture.js";
 
+import User from "../models/User.js";
+
+import Post from "../models/Post.js";
+
 const create = async (req, res) => {
   try {
+    console.log("1");
     const { title, text } = req.body;
 
     const file = req.file;
-
+    console.log("2");
     if (!title || !text || !file) {
       res.status(400).send({
         message: "Submit all fields for registration",
       });
     }
+    console.log("3");
 
     const picture = new Picture({
       src: file.location,
       name: file.key,
     });
 
+    console.log(picture);
+
     const pictureRef = await createPictureService(picture);
 
+    console.log("4");
     const posts = await createService({
       title,
       text,
@@ -51,6 +58,7 @@ const create = async (req, res) => {
       user: req.userId,
     });
 
+    console.log("5");
     res.status(201).send({ posts });
   } catch (error) {
     res.status(500).send({ message: error });
@@ -213,19 +221,16 @@ const searchByUser = async (req, res) => {
   }
 };
 
-//solução encontrada pelo gpt porém preciso refatorar para não ferir os principios da arquitetura limpa
 const searchByUserName = async (req, res) => {
   try {
     const userName = req.params.userName;
 
-    // Encontre o usuário com base no userName
     const user = await User.findOne({ userName });
 
     if (!user) {
       return res.status(404).json({ message: "Usuário não encontrado" });
     }
 
-    // Encontre todas as notícias associadas a esse usuário
     const posts = await Post.find({ user: user._id })
       .sort({ _id: -1 })
       .populate({

@@ -21,8 +21,8 @@ import {
 router.post("/", authMiddleware, upload.single("file"), create);
 router.get("/", getAll);
 router.get("/search", searchByTitle);
-router.get("/byUser", authMiddleware, searchByUser);
 router.get("/byUserName/:userName", searchByUserName);
+router.get("/byUser", authMiddleware, searchByUser);
 router.get("/:id", authMiddleware, getById);
 router.patch("/:id", authMiddleware, update);
 router.delete("/:id", authMiddleware, deletePost);
