@@ -125,7 +125,7 @@ const getById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!id) {
+    if (!id || id === null || id === undefined) {
       return res
         .status(400)
         .send({ message: "Algo de errado não está certo com sua requisição" });
