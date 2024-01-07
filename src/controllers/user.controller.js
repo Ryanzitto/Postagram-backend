@@ -1,5 +1,7 @@
 import userService from "../services/user.service.js";
 
+import { createPictureService } from "../services/picture.service.js";
+
 import Picture from "../models/Picture.js";
 
 import fs from "fs";
