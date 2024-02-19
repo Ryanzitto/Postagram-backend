@@ -13,52 +13,26 @@ import {
   removeCommentService,
 } from "../services/post.service.js";
 
-import {
-  createPictureService,
-  getPictureByIdService,
-  removePictureService,
-} from "../services/picture.service.js";
-
-import { deleteFile } from "../../config/multer.js";
-
-import Picture from "../models/Picture.js";
-
 import User from "../models/User.js";
 
 import Post from "../models/Post.js";
 
 const create = async (req, res) => {
   try {
-    console.log("1");
-    const { title, text } = req.body;
+    const { subject, text } = req.body;
 
-    const file = req.file;
-    console.log("2");
-    if (!title || !text || !file) {
+    if (!subject || !text) {
       res.status(400).send({
         message: "Submit all fields for registration",
       });
     }
-    console.log("3");
 
-    const picture = new Picture({
-      src: file.location,
-      name: file.key,
-    });
-
-    console.log(picture);
-
-    const pictureRef = await createPictureService(picture);
-
-    console.log("4");
     const posts = await createService({
-      title,
+      subject,
       text,
-      banner: pictureRef._id,
       user: req.userId,
     });
 
-    console.log("5");
     res.status(201).send({ posts });
   } catch (error) {
     res.status(500).send({ message: error });
@@ -111,15 +85,13 @@ const getAll = async (req, res) => {
       total,
       results: posts.map((item) => ({
         _id: item._id,
-        title: item.title,
+        subject: item.subject,
         text: item.text,
-        banner: item.banner,
         likes: item.likes,
         comments: item.comments,
         user: {
           name: item.user.name,
           userName: item.user.userName,
-          avatar: item.user.avatar,
           createdAt: item.createdAt,
         },
       })),
@@ -148,9 +120,8 @@ const getById = async (req, res) => {
     return res.send({
       posts: {
         _id: posts._id,
-        title: posts.title,
+        subject: posts.subject,
         text: posts.text,
-        banner: posts.banner,
         likes: posts.likes,
         comments: posts.comments,
         createdAt: posts.createdAt,
@@ -159,40 +130,10 @@ const getById = async (req, res) => {
           name: posts.user.name,
           userName: posts.user.userName,
           email: posts.user.email,
-          avatar: posts.user.avatar,
           __v: posts.user.__v,
           bio: posts.user.bio,
         },
       },
-    });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-  }
-};
-
-const searchByTitle = async (req, res) => {
-  try {
-    const { title } = req.query;
-    const posts = await searchByTitleService(title);
-
-    if (posts.length === 0) {
-      return res.status(400).send({ message: "no posts existing " });
-    }
-
-    console.log(posts);
-
-    return res.send({
-      posts: posts.map((item) => ({
-        id: item._id,
-        title: item.title,
-        text: item.text,
-        banner: item.banner,
-        likes: item.likes,
-        comments: item.comments,
-        name: item.user.name,
-        userName: item.user.userName,
-        userAvatar: item.user.avatars,
-      })),
     });
   } catch (error) {
     res.status(500).send({ message: error.message });
@@ -206,14 +147,12 @@ const searchByUser = async (req, res) => {
     return res.send({
       results: posts.map((item) => ({
         id: item._id,
-        title: item.title,
+        subject: item.subject,
         text: item.text,
-        banner: item.banner,
         likes: item.likes,
         comments: item.comments,
         name: item.user.name,
         userName: item.user.userName,
-        userAvatar: item.user.avatars,
       })),
     });
   } catch (error) {
@@ -233,10 +172,7 @@ const searchByUserName = async (req, res) => {
 
     const posts = await Post.find({ user: user._id })
       .sort({ _id: -1 })
-      .populate({
-        path: "user",
-        populate: { path: "avatar" },
-      })
+      .populate("user")
       .populate("banner");
 
     return res.status(200).json(posts);
@@ -247,12 +183,12 @@ const searchByUserName = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { title, text } = req.body;
+    const { subject, text } = req.body;
 
     const { id } = req.params;
 
     console.log(id);
-    if (!title && !text) {
+    if (!subject && !text) {
       return res.status(400).send({
         message: "Submit at least one field",
       });
@@ -264,7 +200,7 @@ const update = async (req, res) => {
       return res.status(400).send({ message: "you did not update this post" });
     }
 
-    await updateService(id, title, text);
+    await updateService(id, subject, text);
 
     return res.send({ message: "Post successfully updated" });
   } catch (error) {
@@ -276,31 +212,13 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const { idPicture, pictureName } = req.body;
-
-    if (!idPicture || !pictureName) {
-      return res
-        .status(400)
-        .send({ message: "Submit All fields to delete this post" });
-    }
-
     const posts = await getByIdService(id);
 
     if (posts.user.id != req.userId) {
       return res.status(400).send({ message: "you did not delete this post" });
     }
 
-    const picture = await getPictureByIdService(idPicture);
-
-    if (!picture) {
-      res.status(404).send({ message: "Imagem não encontrada" });
-    }
-
     await deletePostService(id);
-
-    await removePictureService(idPicture);
-
-    const deletedFile = await deleteFile(pictureName);
 
     return res.send({ message: "post deleted!" });
   } catch (error) {
@@ -377,7 +295,6 @@ export {
   create,
   getAll,
   getById,
-  searchByTitle,
   searchByUser,
   searchByUserName,
   update,

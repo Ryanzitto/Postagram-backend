@@ -1,18 +1,13 @@
 import mongoose from "mongoose";
 
 const PostSchema = mongoose.Schema({
-  title: {
+  subject: {
     type: String,
     require: true,
   },
   text: {
     type: String,
     require: true,
-  },
-  banner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Picture",
-    required: true,
   },
   createdAt: {
     type: Date,

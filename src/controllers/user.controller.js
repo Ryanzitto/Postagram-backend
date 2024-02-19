@@ -1,40 +1,18 @@
 import userService from "../services/user.service.js";
 
-import { createPictureService } from "../services/picture.service.js";
-
-import Picture from "../models/Picture.js";
-
-import fs from "fs";
-
 const create = async (req, res) => {
   try {
     const { name, userName, email, password } = req.body;
 
-    const file = req.file;
-
-    if (!file) {
-      res.status(400).send({
-        message: "Send a file to continue!",
-      });
-    }
-
-    const picture = new Picture({
-      src: file.location,
-      name: file.key,
-    });
-
     if (!name || !userName || !email || !password) {
       res.status(400).send({ message: "Submit all fields for registration" });
     }
-
-    const pictureRef = await createPictureService(picture);
 
     const user = await userService.createService({
       name: name,
       userName: userName,
       email: email,
       password: password,
-      avatar: pictureRef._id,
     });
 
     res.status(201).send({
@@ -90,28 +68,16 @@ const findByUserName = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { name, userName, email, password, bio, pictureID } = req.body;
+    const { name, userName, email, password, bio } = req.body;
 
     const file = req.file;
 
     const id = req.params.id;
 
-    if (!name && !userName && !email && !password && !bio && !file) {
+    if (!name && !userName && !email && !password && !bio) {
       return res
         .status(400)
         .send({ message: "Submit at least one field for registration" });
-    }
-
-    if (file && pictureID) {
-      const pictureToRemove = await getPictureByIdService(pictureID);
-
-      fs.unlinkSync(pictureToRemove.src);
-
-      const picture = new Picture({
-        src: file.path,
-      });
-
-      const updatedPicture = await updatePictureService(pictureID, picture);
     }
 
     const newUserData = req.body;

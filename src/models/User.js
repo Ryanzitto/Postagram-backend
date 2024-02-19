@@ -22,11 +22,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
-  avatar: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Picture",
-    required: false,
-  },
   bio: {
     type: String,
     required: false,
