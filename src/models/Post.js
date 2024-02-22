@@ -26,6 +26,14 @@ const PostSchema = mongoose.Schema({
     type: Array,
     require: true,
   },
+  textColor: {
+    type: String,
+    reuire: true,
+  },
+  bgColor: {
+    type: String,
+    reuire: true,
+  },
 });
 
 const Post = mongoose.model("Post", PostSchema);

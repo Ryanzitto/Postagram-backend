@@ -19,10 +19,10 @@ import Post from "../models/Post.js";
 
 const create = async (req, res) => {
   try {
-    const { subject, text } = req.body;
+    const { subject, text, textColor, bgColor } = req.body;
 
-    if (!subject || !text) {
-      res.status(400).send({
+    if (!subject || !text || !textColor || !bgColor) {
+      return res.status(400).send({
         message: "Submit all fields for registration",
       });
     }
@@ -30,6 +30,8 @@ const create = async (req, res) => {
     const posts = await createService({
       subject,
       text,
+      textColor,
+      bgColor,
       user: req.userId,
     });
 
@@ -87,6 +89,8 @@ const getAll = async (req, res) => {
         _id: item._id,
         subject: item.subject,
         text: item.text,
+        textColor: item.textColor,
+        bgColor: item.bgColor,
         likes: item.likes,
         comments: item.comments,
         user: {
@@ -122,6 +126,8 @@ const getById = async (req, res) => {
         _id: posts._id,
         subject: posts.subject,
         text: posts.text,
+        textColor: posts.textColor,
+        bgColor: posts.bgColor,
         likes: posts.likes,
         comments: posts.comments,
         createdAt: posts.createdAt,
@@ -149,6 +155,8 @@ const searchByUser = async (req, res) => {
         id: item._id,
         subject: item.subject,
         text: item.text,
+        textColor: item.textColor,
+        bgColor: item.bgColor,
         likes: item.likes,
         comments: item.comments,
         name: item.user.name,
