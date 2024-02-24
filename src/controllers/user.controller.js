@@ -8,11 +8,23 @@ const create = async (req, res) => {
       res.status(400).send({ message: "Submit all fields for registration" });
     }
 
+    const existingUser = await userService.findUserByEmailOrUserName(
+      email,
+      userName
+    );
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .send({ message: "Email or userName already in use" });
+    }
+
     const user = await userService.createService({
       name: name,
       userName: userName,
       email: email,
       password: password,
+      avatar: "",
     });
 
     res.status(201).send({
@@ -68,13 +80,11 @@ const findByUserName = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const { name, userName, email, password, bio } = req.body;
-
-    const file = req.file;
+    const { name, userName, email, password, bio, avatar } = req.body;
 
     const id = req.params.id;
 
-    if (!name && !userName && !email && !password && !bio) {
+    if (!name && !userName && !email && !password && !bio && !avatar) {
       return res
         .status(400)
         .send({ message: "Submit at least one field for registration" });

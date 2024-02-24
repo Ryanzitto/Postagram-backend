@@ -19,9 +19,9 @@ import Post from "../models/Post.js";
 
 const create = async (req, res) => {
   try {
-    const { subject, text, textColor, bgColor } = req.body;
+    const { subject, text, textColor, bgColor, textAlign } = req.body;
 
-    if (!subject || !text || !textColor || !bgColor) {
+    if (!subject || !text || !textColor || !bgColor || !textAlign) {
       return res.status(400).send({
         message: "Submit all fields for registration",
       });
@@ -32,6 +32,7 @@ const create = async (req, res) => {
       text,
       textColor,
       bgColor,
+      textAlign,
       user: req.userId,
     });
 
@@ -74,10 +75,10 @@ const getAll = async (req, res) => {
         : null;
 
     if (posts.length === 0) {
-      return res.status(400).send({ message: "there is no registered news" });
+      return res
+        .status(404)
+        .send({ message: "No posts found, how about creating the first one?" });
     }
-
-    console.log(posts);
 
     res.send({
       nextUrl,
@@ -91,8 +92,10 @@ const getAll = async (req, res) => {
         text: item.text,
         textColor: item.textColor,
         bgColor: item.bgColor,
+        textAlign: item.textAlign,
         likes: item.likes,
         comments: item.comments,
+        createdAt: item.createdAt,
         user: {
           name: item.user.name,
           userName: item.user.userName,
@@ -128,6 +131,7 @@ const getById = async (req, res) => {
         text: posts.text,
         textColor: posts.textColor,
         bgColor: posts.bgColor,
+        textAlign: posts.textAlign,
         likes: posts.likes,
         comments: posts.comments,
         createdAt: posts.createdAt,
@@ -157,6 +161,7 @@ const searchByUser = async (req, res) => {
         text: item.text,
         textColor: item.textColor,
         bgColor: item.bgColor,
+        textAlign: item.textAlign,
         likes: item.likes,
         comments: item.comments,
         name: item.user.name,
@@ -180,8 +185,7 @@ const searchByUserName = async (req, res) => {
 
     const posts = await Post.find({ user: user._id })
       .sort({ _id: -1 })
-      .populate("user")
-      .populate("banner");
+      .populate("user");
 
     return res.status(200).json(posts);
   } catch (error) {

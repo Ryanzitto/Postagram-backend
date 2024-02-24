@@ -34,6 +34,10 @@ const PostSchema = mongoose.Schema({
     type: String,
     reuire: true,
   },
+  textAlign: {
+    type: String,
+    reuire: true,
+  },
 });
 
 const Post = mongoose.model("Post", PostSchema);
