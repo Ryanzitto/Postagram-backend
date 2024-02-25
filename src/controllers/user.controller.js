@@ -1,4 +1,5 @@
 import userService from "../services/user.service.js";
+import User from "../models/User.js";
 
 const create = async (req, res) => {
   try {
@@ -100,6 +101,69 @@ const update = async (req, res) => {
   }
 };
 
+const followUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.body.userId;
+
+    if (!id) {
+      return res.status(400).send({
+        message: "send the id of user that you want to follow to continue",
+      });
+    }
+
+    if (!userId) {
+      return res.status(400).send({
+        message: "send the userId to continue",
+      });
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: { following: id },
+    });
+    await User.findByIdAndUpdate(id, {
+      $addToSet: { followers: userId },
+    });
+
+    res.status(200).send({ message: "Successfully followed the user." });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+const unfollowUser = async (req, res) => {
+  try {
+    const userIdToFollow = req.params.id;
+
+    const userId = req.body.id;
+
+    if (!userIdToFollow) {
+      return res.status(400).send({
+        message: "envie o id do usuario a se seguir!",
+      });
+    }
+    if (!userId) {
+      return res.status(400).send({
+        message: "envie o id do usuario.",
+      });
+    }
+
+    const achei = await userService.followService(userIdToFollow);
+
+    return res.status(200).send({ message: `achei o usuario: ${achei}` });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 //Criar uma rota de deleção de usuario
 
-export default { create, findAll, findById, update, findByUserName };
+export default {
+  create,
+  findAll,
+  findById,
+  update,
+  findByUserName,
+  followUser,
+  unfollowUser,
+};

@@ -5,6 +5,12 @@ import userController from "../controllers/user.controller.js";
 
 import { validId, validUser } from "../middlewares/global.middlewares.js";
 
+// Rota para seguir um usuário
+router.post("/follow/:id", validId, validUser, userController.followUser);
+
+// Rota para deixar de seguir um usuário
+router.post("/unfollow/:id", userController.unfollowUser);
+
 router.post("/", userController.create);
 
 router.get("/", userController.findAll);

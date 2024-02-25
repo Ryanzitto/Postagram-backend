@@ -2,15 +2,21 @@ import User from "../models/User.js";
 
 const createService = (body) => User.create(body);
 
-const findAllService = () => User.find();
+const findAllService = () =>
+  User.find().populate("following").populate("followers");
 
-const findByIdService = (id) => User.findById(id);
+const findByIdService = (id) =>
+  User.findById(id).populate("following").populate("followers");
 
 const updateService = (id, newUserData) =>
-  User.findOneAndUpdate({ _id: id }, newUserData);
+  User.findOneAndUpdate({ _id: id }, newUserData)
+    .populate("following")
+    .populate("followers");
 
 const findByUserNameService = (userName) =>
-  User.findOne({ userName: userName });
+  User.findOne({ userName: userName })
+    .populate("following")
+    .populate("followers");
 
 const findUserByEmailOrUserName = async (email, userName) => {
   try {
@@ -22,6 +28,7 @@ const findUserByEmailOrUserName = async (email, userName) => {
     throw new Error("Error finding user");
   }
 };
+
 export default {
   createService,
   findAllService,
