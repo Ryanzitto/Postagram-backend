@@ -3,9 +3,9 @@ import User from "../models/User.js";
 
 const create = async (req, res) => {
   try {
-    const { name, userName, email, password } = req.body;
+    const { name, userName, email, password, avatar } = req.body;
 
-    if (!name || !userName || !email || !password) {
+    if (!name || !userName || !email || !password || !avatar) {
       res.status(400).send({ message: "Submit all fields for registration" });
     }
 
@@ -25,7 +25,7 @@ const create = async (req, res) => {
       userName: userName,
       email: email,
       password: password,
-      avatar: "",
+      avatar: avatar,
     });
 
     res.status(201).send({

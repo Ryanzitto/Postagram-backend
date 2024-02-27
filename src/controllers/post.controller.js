@@ -186,6 +186,17 @@ const searchByUserName = async (req, res) => {
       .sort({ _id: -1 })
       .populate("user");
 
+    if (!posts) {
+      return res
+        .status(404)
+        .send({ message: "No posts found, how about creating the first one?" });
+    }
+    if (posts.length === 0) {
+      return res
+        .status(404)
+        .send({ message: "No posts found, how about creating the first one?" });
+    }
+
     return res.status(200).json(posts);
   } catch (error) {
     return res.status(500).json({ message: "Erro ao buscar Posts", error });
