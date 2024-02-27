@@ -121,6 +121,7 @@ const followUser = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $addToSet: { following: id },
     });
+
     await User.findByIdAndUpdate(id, {
       $addToSet: { followers: userId },
     });

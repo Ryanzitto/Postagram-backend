@@ -187,14 +187,10 @@ const searchByUserName = async (req, res) => {
       .populate("user");
 
     if (!posts) {
-      return res
-        .status(404)
-        .send({ message: "No posts found, how about creating the first one?" });
+      return res.status(404).send({ message: "This user has no posts." });
     }
     if (posts.length === 0) {
-      return res
-        .status(404)
-        .send({ message: "No posts found, how about creating the first one?" });
+      return res.status(404).send({ message: "This user has no posts." });
     }
 
     return res.status(200).json(posts);
