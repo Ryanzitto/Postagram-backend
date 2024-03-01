@@ -134,29 +134,34 @@ const followUser = async (req, res) => {
 
 const unfollowUser = async (req, res) => {
   try {
-    const userIdToFollow = req.params.id;
+    const { id } = req.params;
+    const userId = req.body.userId;
 
-    const userId = req.body.id;
-
-    if (!userIdToFollow) {
+    if (!id) {
       return res.status(400).send({
-        message: "envie o id do usuario a se seguir!",
+        message: "send the id of user that you want to unfollow to continue",
       });
     }
+
     if (!userId) {
       return res.status(400).send({
-        message: "envie o id do usuario.",
+        message: "send the userId to continue",
       });
     }
 
-    const achei = await userService.followService(userIdToFollow);
+    await User.findByIdAndUpdate(userId, {
+      $pull: { following: id },
+    });
 
-    return res.status(200).send({ message: `achei o usuario: ${achei}` });
+    await User.findByIdAndUpdate(id, {
+      $pull: { followers: userId },
+    });
+
+    res.status(200).send({ message: "Successfully unfollowed the user." });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
 };
-
 //Criar uma rota de deleção de usuario
 
 export default {

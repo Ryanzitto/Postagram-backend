@@ -99,6 +99,7 @@ const getAll = async (req, res) => {
           name: item.user.name,
           userName: item.user.userName,
           createdAt: item.createdAt,
+          avatar: item.user.avatar,
         },
       })),
     });
