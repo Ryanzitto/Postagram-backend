@@ -14,10 +14,12 @@ import {
   like,
   comment,
   removeComment,
+  countPostController,
 } from "../controllers/post.controller.js";
 
 router.post("/", authMiddleware, create);
 router.get("/", getAll);
+router.get("/countPosts/:id", countPostController);
 router.get("/byUserName/:userName", searchByUserName);
 router.get("/byUser", authMiddleware, searchByUser);
 router.get("/:id", authMiddleware, getById);

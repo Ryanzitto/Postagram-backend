@@ -26,6 +26,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  totalPosts: {
+    type: Number,
+    required: false,
+  },
   avatar: {
     type: String,
     required: true,
@@ -42,6 +46,10 @@ const UserSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
 UserSchema.pre("save", async function (next) {

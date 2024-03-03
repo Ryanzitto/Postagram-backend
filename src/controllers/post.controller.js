@@ -1,7 +1,7 @@
 import {
   createService,
   findAllService,
-  countPost,
+  countPostService,
   getByIdService,
   searchByUserService,
   updateService,
@@ -10,6 +10,7 @@ import {
   likeDeleteService,
   addCommentService,
   removeCommentService,
+  countPost,
 } from "../services/post.service.js";
 
 import User from "../models/User.js";
@@ -98,7 +99,7 @@ const getAll = async (req, res) => {
         user: {
           name: item.user.name,
           userName: item.user.userName,
-          createdAt: item.createdAt,
+          createdAt: item.user.createdAt,
           avatar: item.user.avatar,
         },
       })),
@@ -310,6 +311,18 @@ const removeComment = async (req, res) => {
   }
 };
 
+const countPostController = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const totalposts = await countPostService(id);
+    console.log(totalposts);
+    res.status(200).send({ totalPosts: totalposts });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 export {
   create,
   getAll,
@@ -321,4 +334,5 @@ export {
   like,
   comment,
   removeComment,
+  countPostController,
 };

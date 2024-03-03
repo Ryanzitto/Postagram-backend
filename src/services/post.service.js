@@ -5,6 +5,8 @@ const createService = (body) => Post.create(body);
 const findAllService = (limit, offset) =>
   Post.find().sort({ _id: -1 }).skip(offset).limit(limit).populate("user");
 
+const countPostService = (id) => Post.countDocuments({ user: id });
+
 const countPost = () => Post.countDocuments();
 
 const getByIdService = (id) => Post.findById(id).populate("user");
@@ -72,7 +74,7 @@ const findByUserName = (userName) =>
 export {
   createService,
   findAllService,
-  countPost,
+  countPostService,
   getByIdService,
   searchByTitleService,
   searchByUserService,
@@ -85,4 +87,5 @@ export {
   searchByUserNameService,
   findByUserUserId,
   findByUserName,
+  countPost,
 };

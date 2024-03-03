@@ -1,4 +1,5 @@
 import userService from "../services/user.service.js";
+import { countPostService } from "../services/post.service.js";
 import User from "../models/User.js";
 
 const create = async (req, res) => {
@@ -42,7 +43,12 @@ const findAll = async (req, res) => {
     const users = await userService.findAllService();
 
     if (users.length === 0) {
-      return res.status(400).send({ message: "there is no registred users" });
+      return res.status(400).send({ message: "There are no registered users" });
+    }
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      const totalPosts = await countPostService(user._id);
+      user.totalPosts = totalPosts;
     }
     res.send(users);
   } catch (error) {
@@ -72,6 +78,9 @@ const findByUserName = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: "userName not found" });
     }
+
+    const totalPosts = await countPostService(user._id);
+    user.totalPosts = totalPosts;
 
     res.send(user);
   } catch (error) {
@@ -162,6 +171,7 @@ const unfollowUser = async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 };
+
 //Criar uma rota de deleção de usuario
 
 export default {
