@@ -172,8 +172,6 @@ const unfollowUser = async (req, res) => {
   }
 };
 
-//Criar uma rota de deleção de usuario
-
 export default {
   create,
   findAll,
