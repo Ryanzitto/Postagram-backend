@@ -27,6 +27,7 @@ const create = async (req, res) => {
       email: email,
       password: password,
       avatar: avatar,
+      bio: `I'm ${name}, and a love this app.`,
     });
 
     res.status(201).send({
@@ -100,11 +101,19 @@ const update = async (req, res) => {
         .send({ message: "Submit at least one field for registration" });
     }
 
+    const alreadyUserNameExist = await userService.findByUserNameService(
+      userName
+    );
+
+    if (alreadyUserNameExist) {
+      return res.status(400).send({ message: "userName is already in use!" });
+    }
+
     const newUserData = req.body;
 
     const userUpdated = await userService.updateService(id, newUserData);
 
-    res.status(200).send({ message: "User updated with sucess." });
+    res.status(200).send(userUpdated);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
