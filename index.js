@@ -46,12 +46,7 @@ app.use("/auth", authRoute);
 app.use("/post", newsRoute);
 
 const port = process.env.PORT || 3000;
-const portSocket = process.env.PORT || 3002;
 
 app.listen(port, () => {
   console.log(`Servidor rodando na porta: ${port}`);
-});
-
-httpServer.listen(portSocket, () => {
-  console.log(`Servidor rodando na porta: ${portSocket}`);
 });
