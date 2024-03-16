@@ -8,8 +8,8 @@ import newsRoute from "./src/routes/post.route.js";
 import { connectDB } from "./src/database/db.js";
 import dotenv from "dotenv";
 
-const httpServer = createServer();
-
+const app = express();
+const httpServer = createServer(app); // Passando o app (Express) para o servidor HTTP
 const io = new Server(httpServer, {
   cors: {
     origin: "*",
@@ -35,7 +35,6 @@ io.on("connection", (socket) => {
   });
 });
 
-const app = express();
 app.use(express.json());
 app.use(cors());
 dotenv.config();
@@ -46,7 +45,12 @@ app.use("/auth", authRoute);
 app.use("/post", newsRoute);
 
 const port = process.env.PORT || 3000;
+const portSocket = process.env.PORT || 3002;
 
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta: ${port}`);
+// app.listen(port, () => {
+//   console.log(`Servidor rodando na porta: ${port}`);
+// });
+
+httpServer.listen(portSocket, () => {
+  console.log(`Servidor rodando na porta: ${portSocket}`);
 });
