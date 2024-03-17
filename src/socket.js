@@ -6,6 +6,8 @@ const app = express();
 
 const server = http.createServer(app);
 
+let connectedUsers = [];
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -14,20 +16,28 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("Novo cliente conectado");
-  // Evento para lidar com o recebimento de mensagens
+  socket.on("userConnected", (username) => {
+    console.log("Usuário conectado:", username);
+    connectedUsers.push(username);
+    io.emit("updateUsers", connectedUsers);
+  });
+
+  socket.on("userDisconnected", (username) => {
+    console.log("Usuário desconectado:", username);
+    connectedUsers = connectedUsers.filter((user) => user !== username);
+    io.emit("updateUsers", connectedUsers);
+  });
+
   const handleMessage = (data) => {
     console.log("Nova mensagem recebida:", data.text, "de", data.username);
-    // Encaminhar a mensagem para todos os clientes conectados
     io.emit("message", data);
   };
 
   socket.on("message", handleMessage);
 
-  // Remover o listener quando o cliente se desconectar
   socket.on("disconnect", () => {
     console.log("Cliente desconectado");
-    socket.off("message", handleMessage); // Remover o listener do evento "message"
+    socket.off("message", handleMessage);
   });
 });
 
