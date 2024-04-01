@@ -16,13 +16,13 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  socket.on("userConnected", (username) => {
+  socket.on("userConnected", (user) => {
     let joinMessage = {
-      text: `${username} joined the chat.`,
+      text: `${user.username} joined the chat.`,
       type: "systemMessage",
     };
-    console.log("Usuário conectado:", username);
-    connectedUsers.push(username);
+    console.log("Usuário conectado:", user.username);
+    connectedUsers.push(user);
     io.emit("updateUsers", connectedUsers);
     io.emit("message", joinMessage);
   });
@@ -33,7 +33,9 @@ io.on("connection", (socket) => {
       type: "systemMessage",
     };
     console.log("Usuário desconectado:", username);
-    connectedUsers = connectedUsers.filter((user) => user !== username);
+    connectedUsers = connectedUsers.filter(
+      (user) => user.username !== username
+    );
     io.emit("updateUsers", connectedUsers);
     io.emit("message", leftMessage);
   });
